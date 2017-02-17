@@ -1,0 +1,25 @@
+#spectraVisualizationUL li{
+	margin: 0 0;
+}
+
+#spectraVisualizationUL {
+	list-style: none;
+	padding-left:2.5vw;
+}
+
+body {
+	background-color: #616ae2;
+	color: black;
+}
+
+.container-fluid .row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.fill {
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-image: url('path/to/image.jpg');
+}

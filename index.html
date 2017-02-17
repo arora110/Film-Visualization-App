@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Akash & Dono">
+
+    <title>Spectra</title>
+
+    <!-- Bootstrap Core CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href="/main.css" rel="stylesheet">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript">
+    var reader; //GLOBAL File Reader object for demo purpose only, lol
+
+    /**
+     * Check for the various File API support.
+     */
+    function checkFileAPI() {
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            reader = new FileReader();
+            return true; 
+        } else {
+            alert('The File APIs are not fully supported by your browser. Fallback required.');
+            return false;
+        }
+    }
+
+    /**
+     * read text input
+     */
+    function readText(filePath) {
+        var output = ""; //placeholder for text output
+        if(filePath.files && filePath.files[0]) {           
+            reader.onload = function (e) {
+                output = e.target.result;
+                displayContents(output);
+            };//end onload()
+            reader.readAsText(filePath.files[0]);
+        }//end if html5 filelist support
+        else if(ActiveXObject && filePath) { //fallback to IE 6-8 support via ActiveX
+            try {
+                reader = new ActiveXObject("Scripting.FileSystemObject");
+                var file = reader.OpenTextFile(filePath, 1); //ActiveX File Object
+                output = file.ReadAll(); //text contents of file
+                file.Close(); //close file "input stream"
+                displayContents(output);
+            } catch (e) {
+                if (e.number == -2146827859) {
+                    alert('Unable to access local files due to browser security settings. ' + 
+                     'To overcome this, go to Tools->Internet Options->Security->Custom Level. ' + 
+                     'Find the setting for "Initialize and script ActiveX controls not marked as safe" and change it to "Enable" or "Prompt"'); 
+                }
+            }       
+        }
+        else { //this is where you could fallback to Java Applet, Flash or similar
+            return false;
+        }       
+        return true;
+    }   
+
+    /**
+     * display content using a basic HTML replacement
+     */
+    function displayContents(txt) {
+		var hex_values = txt.split('#');
+		makeUL(hex_values);
+    }
+
+	function makeUL(array) {
+		// Create the list element:
+		var list = document.getElementById('spectraVisualizationUL');
+		for(var i = 1; i < array.length; i++) {
+			// Create the list item:
+			var item = document.createElement('li');
+
+			var divColorBar = document.createElement("div");
+			divColorBar.id = i.toString();
+			divColorBar.className = "avgColorImg";
+			divColorBar.style.width = "100%";
+			divColorBar.style.height = "10px";
+			divColorBar.style.background = "#"+array[i];
+			
+			var imgColorSource = document.createElement("img");
+			imgColorSource.className = "fill";
+			imgColorSource.src = "/libs/DDK/image-" + divColorBar.id + ".jpeg";
+			imgColorSource.id = "img_" + i.toString();
+			imgColorSource.style.visibility = 'hidden';
+			divColorBar.appendChild(imgColorSource);
+			 
+			// Set its contents:
+			item.appendChild(divColorBar);
+			// Add it to the list:
+			list.appendChild(item);
+		}
+	}
+
+	var classname = document.getElementsByClassName("avgColorImg");
+	var myFunction = function() {
+		//var attribute = this.getAttribute("background");
+		alert("Test");
+	};
+
+	for (var i = 0; i < classname.length; i++) {
+		classname[i].addEventListener('click', myFunction, false);
+	}
+</script>
+</head>
+<body onload="checkFileAPI();">
+	<div class="container-fluid">  
+		<div class="row">
+			<div class="col-sm-12">
+				<div style="margin: 2.5vh 2.5vw;">
+					<input type="file" onchange='readText(this)' />
+					<br/>
+					<hr/>   
+					<h3>Film Spectra Visualization:</h3>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-5">
+					<ul id="spectraVisualizationUL">
+					</ul>
+			</div>
+			<div class="col-sm-5 col-sm-offset-2">
+
+			</div>
+		</div> 
+    </div>
+</body>
+</html>
